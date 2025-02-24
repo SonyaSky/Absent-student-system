@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using api.Data;
 using api.Dtos;
+using api.Interfaces;
 using api.Mappers;
 using api.Models;
 using Microsoft.AspNetCore.Identity;
@@ -17,18 +18,13 @@ namespace api.Controllers
     {
         private readonly UserManager<User> _userManager;
         private readonly ApplicationDBContext _context;
+        private readonly ITokenService _tokenService;
 
-        public StudentController(UserManager<User> userManager, ApplicationDBContext context)
+        public StudentController(UserManager<User> userManager, ApplicationDBContext context, ITokenService tokenService)
         {
             _userManager = userManager;
             _context = context;
-        }
-
-        [HttpGet]
-        public IActionResult GetAll()
-        {
-            var students = _context.Students.ToList();
-            return Ok(students);
+            _tokenService = tokenService;
         }
 
         [HttpPost("register")]
@@ -52,7 +48,11 @@ namespace api.Controllers
                 if (createdStudent.Succeeded)
                 {
                     var roleResult = await _userManager.AddToRoleAsync(student, "Student");
-                    return Ok();
+                    return Ok(
+                        new TokenResponse {
+                        Token = _tokenService.CreateToken(student)
+                    }
+                    );
                 } 
                 else 
                 {
