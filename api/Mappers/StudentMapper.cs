@@ -12,7 +12,9 @@ namespace api.Mappers
         public static Student ToStudentFromRegisterDto(this RegisterStudentDto registerDto) 
         {
             return new Student{
-                FullName = registerDto.FullName,
+                Name = registerDto.Name,
+                Surname = registerDto.Surname,
+                Patronymic = registerDto.Patronymic,
                 Email = registerDto.Email,
                 UserName = registerDto.Email,
                 Group = registerDto.Group,
