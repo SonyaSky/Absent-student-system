@@ -17,13 +17,13 @@ namespace api.Controllers
     public class StudentController: ControllerBase
     {
         private readonly UserManager<User> _userManager;
-        private readonly ApplicationDBContext _context;
+        private readonly IEmailService _emailService;
         private readonly ITokenService _tokenService;
 
-        public StudentController(UserManager<User> userManager, ApplicationDBContext context, ITokenService tokenService)
+        public StudentController(UserManager<User> userManager, IEmailService emailService, ITokenService tokenService)
         {
             _userManager = userManager;
-            _context = context;
+            _emailService = emailService;
             _tokenService = tokenService;
         }
 
@@ -48,11 +48,11 @@ namespace api.Controllers
                 if (createdStudent.Succeeded)
                 {
                     var roleResult = await _userManager.AddToRoleAsync(student, "Student");
+                    //await _emailService.SendEmail(student.Email);
                     return Ok(
                         new TokenResponse {
                         Token = _tokenService.CreateToken(student)
-                    }
-                    );
+                    });
                 } 
                 else 
                 {
@@ -61,7 +61,10 @@ namespace api.Controllers
 
             } catch (Exception e) 
             {
-                return StatusCode(500, e);
+                return BadRequest( new Response{
+                    Status = "Error",
+                    Message = e.Message
+                });
             }
         }
     }

@@ -18,6 +18,7 @@ namespace api.Data
         }
 
         public DbSet<Student> Students { get; set; }
+        public DbSet<EmailCode> EmailCodes {get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -46,6 +47,8 @@ namespace api.Data
                 }
             };
             builder.Entity<IdentityRole>().HasData(roles);
+
+            builder.Entity<EmailCode>(x => x.HasKey(ec => new {ec.Email, ec.Code}));
         }
 
     }
