@@ -5,7 +5,9 @@ using System.Threading.Tasks;
 using api.Interfaces;
 using api.Mappers;
 using api.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace api.Controllers
 {
@@ -20,7 +22,8 @@ namespace api.Controllers
             _facultyService = facultyService;
         }
 
-        [HttpPost()]
+        [HttpPost]
+        [SwaggerOperation(Summary = "Create a faculty (do not use for app)")]
         public async Task<IActionResult> CreateFaculty([FromBody] string name) {
             if (name == string.Empty)
             {
@@ -32,6 +35,7 @@ namespace api.Controllers
         }
 
         [HttpPost("{id}/group")]
+        [SwaggerOperation(Summary = "Create a group (do not use for app)")]
         public async Task<IActionResult> CreateGroup([FromBody] string name, [FromRoute] Guid id) {
             if (name == string.Empty)
             {
@@ -41,7 +45,7 @@ namespace api.Controllers
             if (!isIdValid) {
                 return BadRequest(new Response {
                     Status = "Error",
-                    Message = $"Faculty with id = {id} doesn't exists"
+                    Message = $"Faculty with id={id} doesn't exists"
                 }
                 );
             }
@@ -50,19 +54,22 @@ namespace api.Controllers
             return Ok(group);
         }
 
-        [HttpGet()]
+        [HttpGet]
+        [AllowAnonymous]
+        [SwaggerOperation(Summary = "Get all faculties")]
         public async Task<IActionResult> GetAllFaculties() {
             var faculties = await _facultyService.GetFacultiesAsync();
             return Ok(faculties);
         }
 
         [HttpGet("{id}/group")]
+        [SwaggerOperation(Summary = "Get groups of a faculty")]
         public async Task<IActionResult> GetGroups([FromRoute] Guid id) {
             var isIdValid = await _facultyService.DoesFacultyExist(id);
             if (!isIdValid) {
                 return BadRequest(new Response {
                     Status = "Error",
-                    Message = $"Faculty with id = {id} doesn't exists"
+                    Message = $"Faculty with id={id} doesn't exists"
                 }
                 );
             }

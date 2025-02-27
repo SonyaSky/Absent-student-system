@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using api.Dtos.Faculty;
 using api.Models;
 using api.Validations;
 
@@ -24,6 +25,6 @@ namespace api.Dtos
         [PhoneNumber]
         public string PhoneNumber { get; set; } = string.Empty;
         [Required]
-        public List<Group> Groups { get; set; } = new List<Group>();
+        public List<Guid> Groups { get; set; } = new List<Guid>();
     }
 }

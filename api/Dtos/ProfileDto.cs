@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using api.Dtos.Faculty;
 using api.Models;
 
 namespace api.Dtos
@@ -14,6 +15,6 @@ namespace api.Dtos
         public string Patronymic { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
         public string? PhoneNumber { get; set; } = string.Empty;
-        public List<Group> Groups { get; set; } = new List<Group>();
+        public List<GroupDto> Groups { get; set; } = new List<GroupDto>();
     }
 }

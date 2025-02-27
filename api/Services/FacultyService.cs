@@ -64,5 +64,14 @@ namespace api.Services
             var faculty = await _context.Faculties.FirstOrDefaultAsync(f => f.Id == facultyId);
             return faculty.ToFacultyDto();
         }
+
+        public async Task<bool> DoesGroupExist(Guid groupId)
+        {
+            var group = await _context.Groups.FirstOrDefaultAsync(g => g.Id == groupId);
+            if (group == null) {
+                return false;
+            } 
+            return true;
+        }
     }
 }

@@ -11,5 +11,10 @@ namespace api.Models
         public Guid GroupId { get; set; }
         public Student Student { get; set; }
         public Group Group { get; set; }
+        public StudentGroup(string studentId, Guid groupId)
+        {
+            StudentId = studentId;
+            GroupId = groupId;
+        }
     }
 }

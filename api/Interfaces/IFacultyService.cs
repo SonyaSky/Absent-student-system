@@ -15,5 +15,6 @@ namespace api.Interfaces
         Task<Group> CreateGroup(Group group);
         Task<FacultyDto?> FindFaculty(Guid facultyId);
         Task<bool> DoesFacultyExist(Guid facultyId);
+        Task<bool> DoesGroupExist(Guid groupId);
     }
 }
