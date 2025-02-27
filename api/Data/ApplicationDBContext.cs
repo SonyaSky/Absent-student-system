@@ -18,10 +18,26 @@ namespace api.Data
         }
 
         public DbSet<Student> Students { get; set; }
+        public DbSet<Faculty> Faculties { get; set; }
+        public DbSet<Group> Groups { get; set; }
+        public DbSet<StudentGroup> StudentGroup { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+
+            builder.Entity<StudentGroup>(x => x.HasKey(s => new { s.StudentId, s.GroupId }));
+
+            builder.Entity<StudentGroup>()
+                .HasOne(u => u.Student)
+                .WithMany(u => u.Groups)
+                .HasForeignKey(s => s.StudentId);
+            
+            builder.Entity<StudentGroup>()
+                .HasOne(u => u.Group)
+                .WithMany(u => u.Students)
+                .HasForeignKey(s => s.GroupId);
+
             List<IdentityRole> roles = new List<IdentityRole>
             {
                 new IdentityRole
@@ -46,6 +62,7 @@ namespace api.Data
                 }
             };
             builder.Entity<IdentityRole>().HasData(roles);
+
         }
 
     }

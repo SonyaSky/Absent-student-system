@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using api.Data;
 
@@ -11,9 +12,11 @@ using api.Data;
 namespace api.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    partial class ApplicationDBContextModelSnapshot : ModelSnapshot
+    [Migration("20250225051005_EmailCode")]
+    partial class EmailCode
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -51,25 +54,25 @@ namespace api.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "bde13400-07a6-4e3f-816b-3de03196d2d1",
+                            Id = "f98f7294-36af-452f-81fd-6d8cfdeb8cf5",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "92cbab94-6956-4015-86b6-42a745a1b284",
+                            Id = "12df87ed-f081-4e82-bdf0-cf2a305a20d3",
                             Name = "Student",
                             NormalizedName = "STUDENT"
                         },
                         new
                         {
-                            Id = "c3b8c5ae-254b-4ab3-9703-dc5105ee54d2",
+                            Id = "66a81d88-c2f3-4b24-befe-f9965e3e35b1",
                             Name = "Teacher",
                             NormalizedName = "TEACHER"
                         },
                         new
                         {
-                            Id = "ff8fd1e5-6cb3-4642-8525-da5ce081fe49",
+                            Id = "f83baf9e-7cd1-408e-adb5-5467e8734b53",
                             Name = "Department",
                             NormalizedName = "DEPARTMENT"
                         });
@@ -181,54 +184,17 @@ namespace api.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("api.Models.Faculty", b =>
+            modelBuilder.Entity("api.Models.EmailCode", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Faculties");
-                });
-
-            modelBuilder.Entity("api.Models.Group", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("FacultyId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Number")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("FacultyId");
-
-                    b.ToTable("Groups");
-                });
-
-            modelBuilder.Entity("api.Models.StudentGroup", b =>
-                {
-                    b.Property<string>("StudentId")
+                    b.Property<string>("Email")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<Guid>("GroupId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("Code")
+                        .HasColumnType("nvarchar(450)");
 
-                    b.HasKey("StudentId", "GroupId");
+                    b.HasKey("Email", "Code");
 
-                    b.HasIndex("GroupId");
-
-                    b.ToTable("StudentGroup");
+                    b.ToTable("EmailCodes");
                 });
 
             modelBuilder.Entity("api.Models.User", b =>
@@ -324,6 +290,14 @@ namespace api.Migrations
                 {
                     b.HasBaseType("api.Models.User");
 
+                    b.Property<string>("Faculty")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Group")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasDiscriminator().HasValue("Student");
                 });
 
@@ -376,51 +350,6 @@ namespace api.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("api.Models.Group", b =>
-                {
-                    b.HasOne("api.Models.Faculty", "Faculty")
-                        .WithMany("Groups")
-                        .HasForeignKey("FacultyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Faculty");
-                });
-
-            modelBuilder.Entity("api.Models.StudentGroup", b =>
-                {
-                    b.HasOne("api.Models.Group", "Group")
-                        .WithMany("Students")
-                        .HasForeignKey("GroupId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("api.Models.Student", "Student")
-                        .WithMany("Groups")
-                        .HasForeignKey("StudentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Group");
-
-                    b.Navigation("Student");
-                });
-
-            modelBuilder.Entity("api.Models.Faculty", b =>
-                {
-                    b.Navigation("Groups");
-                });
-
-            modelBuilder.Entity("api.Models.Group", b =>
-                {
-                    b.Navigation("Students");
-                });
-
-            modelBuilder.Entity("api.Models.Student", b =>
-                {
-                    b.Navigation("Groups");
                 });
 #pragma warning restore 612, 618
         }
