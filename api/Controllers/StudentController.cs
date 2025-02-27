@@ -21,14 +21,12 @@ namespace api.Controllers
     public class StudentController: ControllerBase
     {
         private readonly UserManager<User> _userManager;
-        private readonly IEmailService _emailService;
         private readonly ITokenService _tokenService;
         private readonly SignInManager<User> _signInManager;
 
-        public StudentController(UserManager<User> userManager, IEmailService emailService, ITokenService tokenService, SignInManager<User> signInManager)
+        public StudentController(UserManager<User> userManager, ITokenService tokenService, SignInManager<User> signInManager)
         {
             _userManager = userManager;
-            _emailService = emailService;
             _tokenService = tokenService;
             _signInManager = signInManager;
         }
@@ -54,7 +52,6 @@ namespace api.Controllers
                 if (createdStudent.Succeeded)
                 {
                     var roleResult = await _userManager.AddToRoleAsync(student, "Student");
-                    //await _emailService.SendEmail(student.Email);
                     return Ok(
                         new TokenResponse {
                         Token = _tokenService.CreateToken(student)

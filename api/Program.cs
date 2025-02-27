@@ -96,8 +96,7 @@ builder.Services.AddAuthentication(options =>
 });
 
 builder.Services.AddScoped<ITokenService, TokenService>();
-builder.Services.AddTransient<IEmailService, EmailService>();
-builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
+builder.Services.AddScoped<IFacultyService, FacultyService>();
 
 var app = builder.Build();
 

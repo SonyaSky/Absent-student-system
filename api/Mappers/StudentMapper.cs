@@ -18,8 +18,6 @@ namespace api.Mappers
                 Email = registerDto.Email,
                 UserName = registerDto.Email,
                 PhoneNumber = registerDto.PhoneNumber,
-                Group = registerDto.Group,
-                Faculty = registerDto.Faculty,
                 Role = Role.Student
             };
         }
@@ -32,7 +30,7 @@ namespace api.Mappers
                 Surname = student.Surname,
                 Patronymic = student.Patronymic,
                 Email = student.Email,
-                PhoneNumber = student.PhoneNumber,
+                PhoneNumber = student.PhoneNumber
             };
         }
     }
