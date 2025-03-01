@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using api.Data;
 using api.Dtos;
+using api.Dtos.Absence;
 using api.Dtos.Faculty;
 using api.Interfaces;
 using api.Mappers;
@@ -34,6 +35,17 @@ namespace api.Repository
                 .ToList();
             await _context.StudentGroup.AddRangeAsync(newStudentGroups);
             await _context.SaveChangesAsync();
+        }
+
+        public async Task CreateAbsence(CreateAbsenceDto absenceDto, string id)
+        {
+            var absence = absenceDto.ToAbsence(id);
+            var files = absenceDto.Files.Select(f => f.ToConfirmationFile(absence.Id)).ToList();
+            await _context.Absences.AddAsync(absence);
+            await _context.ConfirmationFiles.AddRangeAsync(files);
+            await _context.SaveChangesAsync();
+
+            //надо еще их в очередь ставить для деканата на проверку
         }
 
         public async Task<TokenResponse?> CreateStudentAsync(RegisterStudentDto registerStudentDto)
@@ -94,6 +106,22 @@ namespace api.Repository
         {
             var student = await _userManager.FindByNameAsync(username);
             return student;
+        }
+
+        public async Task<List<AbsenceDto>?> GetAllAbsences(string id)
+        {
+            var absences = await _context.Absences
+                .Where(a => a.StudentId == id)
+                .Select(a => a.ToAbsenceDto())
+                .ToListAsync();
+            foreach (AbsenceDto a in absences) {
+                var files = await _context.ConfirmationFiles
+                    .Where(f => f.AbsenceId == a.Id)
+                    .Select(f => f.ToConfirmationFileDto())
+                    .ToListAsync();
+                a.Files = files;
+            }
+            return absences;
         }
 
         public async Task<ProfileDto?> GetProfileAsync(string username)

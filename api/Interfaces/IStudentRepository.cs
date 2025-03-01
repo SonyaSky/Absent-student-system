@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using api.Dtos;
+using api.Dtos.Absence;
 using api.Dtos.Faculty;
 using api.Models;
 
@@ -18,5 +19,7 @@ namespace api.Interfaces
         Task<List<GroupDto>> FindGroups(string studentId);
         Task<User?> FindStudent(string username);
         Task AddGroups(List<Guid> groups, string id);
+        Task CreateAbsence(CreateAbsenceDto absenceDto, string id);
+        Task<List<AbsenceDto>?> GetAllAbsences(string id);
     }
 }
