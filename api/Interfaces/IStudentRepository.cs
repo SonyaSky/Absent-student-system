@@ -19,7 +19,5 @@ namespace api.Interfaces
         Task<List<GroupDto>> FindGroups(string studentId);
         Task<User?> FindStudent(string username);
         Task AddGroups(List<Guid> groups, string id);
-        Task CreateAbsence(CreateAbsenceDto absenceDto, string id);
-        Task<List<AbsenceDto>?> GetAllAbsences(string id);
     }
 }

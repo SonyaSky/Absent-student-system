@@ -170,39 +170,6 @@ namespace api.Controllers
 
         } 
 
-        [HttpPost("absence")]
-        [Authorize]
-        [SwaggerOperation(Summary = "Create an absence")]
-        public async Task<IActionResult> CreateAbsence([FromBody] CreateAbsenceDto absenceDto)
-        {
-            if (!ModelState.IsValid) return BadRequest(ModelState);
-            var username = User.GetUsername();
-            var user = await _studentRepository.FindStudent(username);
-            if (user == null)
-            {
-                return Unauthorized();
-            }
-            await _studentRepository.CreateAbsence(absenceDto, user.Id);
-            return Created();
-        }
-
-        [HttpGet("absence")]
-        [Authorize]
-        [SwaggerOperation(Summary = "Get all absences of a student")]
-        public async Task<IActionResult> GetAbsences()
-        {
-            var username = User.GetUsername();
-            var user = await _studentRepository.FindStudent(username);
-            if (user == null)
-            {
-                return Unauthorized();
-            }
-
-            //здесь надо фильтры по хорошему сделать
-
-            var absences = await _studentRepository.GetAllAbsences(user.Id);
-            return Ok(absences);
-        }
 
     }
 }

@@ -21,6 +21,7 @@ namespace api.Mappers
         }
         public static AbsenceDto ToAbsenceDto(this Absence absence) {
             return new AbsenceDto {
+                Id = absence.Id,
                 From = absence.From,
                 To = absence.To,
                 Reason = absence.Reason,
@@ -34,7 +35,6 @@ namespace api.Mappers
                 AbsenceId = absenceId,
                 Name = fileDto.Name,
                 Description = fileDto.Description,
-                File = fileDto.File,
             };
         }
 
@@ -42,7 +42,6 @@ namespace api.Mappers
             return new ConfirmationFileDto {
                 Name = file.Name,
                 Description = file.Description,
-                File = file.File,
             };
         }
     }

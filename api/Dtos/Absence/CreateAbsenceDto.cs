@@ -14,7 +14,6 @@ namespace api.Dtos.Absence
         public DateTime To { get; set; }
         [Required]
         public string Reason { get; set; } = string.Empty;
-        public List<ConfirmationFileDto> Files { get; set; } = new List<ConfirmationFileDto>();
 
     }
 }

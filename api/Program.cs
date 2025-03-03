@@ -36,6 +36,7 @@ builder.Services.AddSwaggerGen(option =>
 {
     option.SwaggerDoc("v1", new OpenApiInfo { Title = "InLeave Api", Version = "v1" });
     option.EnableAnnotations();
+    option.MapType<IFormFile>(() => new OpenApiSchema { Type = "string", Format = "binary" });
     option.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         In = ParameterLocation.Header,
@@ -98,6 +99,8 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IFacultyService, FacultyService>();
+builder.Services.AddScoped<IFileService, FileService>();
+builder.Services.AddScoped<IAbsenceService, AbsenceService>();
 builder.Services.AddScoped<IStudentRepository, StudentRepository>();
 
 var app = builder.Build();
