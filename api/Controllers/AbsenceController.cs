@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using api.Dtos.Absence;
 using api.Extensions;
 using api.Interfaces;
+using api.Mappers;
 using api.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -25,7 +26,7 @@ namespace api.Controllers
             _studentRepository = studentRepository;
         }
 
-        [HttpPost("absence")]
+        [HttpPost]
         [Authorize]
         [SwaggerOperation(Summary = "Create an absence")]
         public async Task<IActionResult> CreateAbsence([FromBody] CreateAbsenceDto absenceDto)
@@ -47,10 +48,10 @@ namespace api.Controllers
             return Created();
         }
 
-        [HttpPost("absence/{id}/file")]
+        [HttpPost("{id}/file")]
         [Authorize]
         [SwaggerOperation(Summary = "Add file to an absence")]
-        public async Task<IActionResult> AddFileToAbsence([FromForm] ConfirmationFileDto fileDto, [FromRoute] Guid id)
+        public async Task<IActionResult> AddFileToAbsence([FromForm] CreateConfirmationFileDto fileDto, [FromRoute] Guid id)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
             var username = User.GetUsername();
@@ -59,12 +60,56 @@ namespace api.Controllers
             {
                 return Unauthorized();
             }
+            var absence = await _absenceService.FindAbsence(id);
+            if (absence == null) {
+                return NotFound(new Response {
+                    Status = "Error",
+                    Message = $"Absence with id={id} was not found in database"
+                });
+            }
+            if (absence.StudentId != user.Id) {
+                return StatusCode(403, new Response {
+                   Status = "Error",
+                    Message = "You can only edit your absences" 
+                });
+            }
 
             await _absenceService.AddFileToAbsence(fileDto, id);
             return Created();
         }
 
-        [HttpGet("absence")]
+        [HttpDelete("file/{id}")]
+        [Authorize]
+        [SwaggerOperation(Summary = "Delete file from an absence")]
+        public async Task<IActionResult> DeleteFileFromAbsence([FromRoute] Guid id)
+        {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+            var username = User.GetUsername();
+            var user = await _studentRepository.FindStudent(username);
+            if (user == null)
+            {
+                return Unauthorized();
+            }
+            var file = await _absenceService.FindFile(id);
+            if (file == null) {
+                return NotFound(new Response {
+                    Status = "Error",
+                    Message = $"File with id={id} was not found in database"
+                });
+            }
+            var absence = await _absenceService.FindAbsence(file.AbsenceId);
+            if (absence.StudentId != user.Id) {
+                return StatusCode(403, new Response {
+                   Status = "Error",
+                    Message = "You can only delete your files" 
+                });
+            }
+
+            await _absenceService.DeleteFile(id);
+            return Ok();
+        }
+
+        [HttpGet]
         [Authorize]
         [SwaggerOperation(Summary = "Get all absences of a student")]
         public async Task<IActionResult> GetAbsences()
@@ -80,6 +125,42 @@ namespace api.Controllers
 
             var absences = await _absenceService.GetAllAbsences(user.Id);
             return Ok(absences);
+        }
+
+        [HttpPut("{id}")]
+        [Authorize]
+        [SwaggerOperation(Summary = "Edit an absence")]
+        public async Task<IActionResult> EditAbsence([FromRoute] Guid id, [FromBody] EditAbsenceDto editAbsenceDto)
+        {
+            var username = User.GetUsername();
+            var user = await _studentRepository.FindStudent(username);
+            if (user == null)
+            {
+                return Unauthorized();
+            }
+
+            var absence = await _absenceService.FindAbsence(id);
+            if (absence == null) {
+                return NotFound(new Response {
+                    Status = "Error",
+                    Message = $"Absence with id={id} was not found in database"
+                });
+            }
+            if (absence.StudentId != user.Id) {
+                return StatusCode(403, new Response {
+                   Status = "Error",
+                    Message = "You can only edit your absences" 
+                });
+            }
+            var editedAbsence = await _absenceService.EditAbsence(id, editAbsenceDto);
+            if (editedAbsence == null)
+            {
+                return BadRequest(new Response {
+                    Status = "Error",
+                    Message = "Something went wrong - couldn't edit the absence"
+                });
+            }
+            return Ok(editedAbsence.ToAbsenceDto());
         }
     }
 }

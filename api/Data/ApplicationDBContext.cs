@@ -18,6 +18,7 @@ namespace api.Data
         }
 
         public DbSet<Student> Students { get; set; }
+        public DbSet<User> Admins {get; set; }
         public DbSet<Faculty> Faculties { get; set; }
         public DbSet<Group> Groups { get; set; }
         public DbSet<StudentGroup> StudentGroup { get; set; }

@@ -21,7 +21,7 @@ namespace api.Services
             _fileService = fileService;
         }
 
-        public async Task AddFileToAbsence(ConfirmationFileDto fileDto, Guid absenceId)
+        public async Task AddFileToAbsence(CreateConfirmationFileDto fileDto, Guid absenceId)
         {
             var file = fileDto.ToConfirmationFile(absenceId);
             var fileName = await _fileService.SaveFileAsync(fileDto.File);
@@ -39,13 +39,36 @@ namespace api.Services
             //надо еще их в очередь ставить для деканата на проверку
         }
 
-        public async Task<bool> DoesAbsenceExist(Guid id)
+        public async Task DeleteFile(Guid fileId)
         {
-            var absence = await _context.Absences.FirstOrDefaultAsync(f => f.Id == id);
+            var file = await _context.ConfirmationFiles.FirstOrDefaultAsync(f => f.Id == fileId);
+            _fileService.DeleteFile(file.File);
+            _context.ConfirmationFiles.Remove(file);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<Absence?> EditAbsence(Guid id, EditAbsenceDto editAbsenceDto)
+        {
+            var absence = await FindAbsence(id);
             if (absence == null) {
-                return false;
-            } 
-            return true;
+                return null;
+            }
+            absence.To = editAbsenceDto.To;
+            absence.Reason = editAbsenceDto.Reason;
+            await _context.SaveChangesAsync();
+            return absence;
+        }
+
+        public async Task<Absence?> FindAbsence(Guid id)
+        {
+            var absence = await _context.Absences.FirstOrDefaultAsync(a => a.Id == id);
+            return absence;
+        }
+
+        public async Task<ConfirmationFile?> FindFile(Guid id)
+        {
+            var file = await _context.ConfirmationFiles.FirstOrDefaultAsync(f => f.Id == id);
+            return file;
         }
 
         public async Task<List<AbsenceDto>?> GetAllAbsences(string id)

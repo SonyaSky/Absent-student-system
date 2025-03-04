@@ -29,7 +29,7 @@ namespace api.Mappers
             };
         }
 
-        public static ConfirmationFile ToConfirmationFile(this ConfirmationFileDto fileDto, Guid absenceId) {
+        public static ConfirmationFile ToConfirmationFile(this CreateConfirmationFileDto fileDto, Guid absenceId) {
             return new ConfirmationFile {
                 Id = new Guid(),
                 AbsenceId = absenceId,
@@ -40,8 +40,10 @@ namespace api.Mappers
 
         public static ConfirmationFileDto ToConfirmationFileDto(this ConfirmationFile file) {
             return new ConfirmationFileDto {
+                Id = file.Id,
                 Name = file.Name,
                 Description = file.Description,
+                File = file.File
             };
         }
     }
