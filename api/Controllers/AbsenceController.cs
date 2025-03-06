@@ -7,6 +7,7 @@ using api.Extensions;
 using api.Interfaces;
 using api.Mappers;
 using api.Models;
+using api.Models.Queries;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
@@ -112,7 +113,7 @@ namespace api.Controllers
         [HttpGet]
         [Authorize]
         [SwaggerOperation(Summary = "Get all absences of a student")]
-        public async Task<IActionResult> GetAbsences()
+        public async Task<IActionResult> GetAbsences([FromQuery] AbsenceQuery query)
         {
             var username = User.GetUsername();
             var user = await _studentRepository.FindStudent(username);
@@ -121,9 +122,7 @@ namespace api.Controllers
                 return Unauthorized();
             }
 
-            //здесь надо фильтры по хорошему сделать
-
-            var absences = await _absenceService.GetAllAbsences(user.Id);
+            var absences = await _absenceService.GetAllAbsences(user.Id, query);
             return Ok(absences);
         }
 

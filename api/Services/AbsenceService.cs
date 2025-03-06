@@ -7,7 +7,9 @@ using api.Dtos.Absence;
 using api.Interfaces;
 using api.Mappers;
 using api.Models;
+using api.Models.Queries;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace api.Services
 {
@@ -71,11 +73,22 @@ namespace api.Services
             return file;
         }
 
-        public async Task<List<AbsenceDto>?> GetAllAbsences(string id)
+        public async Task<List<AbsenceDto>?> GetAllAbsences(string id, AbsenceQuery query)
         {
-            var absences = await _context.Absences
+            var absencesQuery = _context.Absences
                 .Where(a => a.StudentId == id)
-                .Select(a => a.ToAbsenceDto())
+                .AsQueryable();
+
+            if (!query.Statuses.IsNullOrEmpty()) {
+                absencesQuery = absencesQuery.Where(a => query.Statuses.Contains(a.Status));
+            }
+            if (query.AscSorting.HasValue) {
+                absencesQuery = query.AscSorting.Value 
+                    ? absencesQuery.OrderBy(a => a.From) 
+                    : absencesQuery.OrderByDescending(a => a.From);
+            }
+            var absences = await absencesQuery
+                .Select(a => a.ToAbsenceDto()) 
                 .ToListAsync();
             foreach (AbsenceDto a in absences) {
                 var files = await _context.ConfirmationFiles
@@ -86,5 +99,6 @@ namespace api.Services
             }
             return absences;
         }
+
     }
 }
