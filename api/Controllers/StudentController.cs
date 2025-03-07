@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using api.Data;
 using api.Dtos;
+using api.Dtos.Absence;
 using api.Extensions;
 using api.Interfaces;
 using api.Mappers;
@@ -168,6 +169,7 @@ namespace api.Controllers
             return Ok();
 
         } 
+
 
     }
 }
