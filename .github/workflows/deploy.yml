@@ -1,0 +1,40 @@
+# This workflow will build a .NET project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
+name: Deploy ASP.NET App with Docker Compose
+
+on:
+  push:
+    branches:
+      - server-main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Шаг 1: Проверка кода
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Шаг 2: Копирование файлов на сервер
+      - name: Copy files to server
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}  # Адрес сервера
+          username: ${{ secrets.SSH_USERNAME }}  # Имя пользователя
+          key: ${{ secrets.SSH_PRIVATE_KEY }}  # Приватный SSH-ключ
+          source: "Absent-student-system/*"  # Копируем содержимое папки Absent-student-system
+          target: "/root/backend/Absent-student-system"  # Директория на сервере
+
+      # Шаг 3: Запуск Docker Compose на сервере
+      - name: Run Docker Compose
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /root/backend/Absent-student-system
+            docker-compose down
+            docker-compose up -d
+            docker-compose run --rm migrator  # Запуск мигратора
