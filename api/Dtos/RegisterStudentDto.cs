@@ -12,9 +12,10 @@ namespace api.Dtos
     public class RegisterStudentDto
     {
         [Required]
-        public string Surname { get; set; } = string.Empty;
+        public string Surname{ get; set; } = string.Empty;
         [Required]
         public string Name { get; set; } = string.Empty;
+        [Required]
         public string Patronymic { get; set; } = string.Empty;
         [Required]
         [EmailAddress]

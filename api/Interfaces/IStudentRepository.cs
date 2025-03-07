@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using api.Dtos;
-using api.Dtos.Absence;
 using api.Dtos.Faculty;
 using api.Models;
 
