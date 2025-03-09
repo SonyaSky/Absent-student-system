@@ -10,7 +10,7 @@ namespace api.Interfaces
 {
     public interface IAbsenceService
     {
-        Task<Absence> CreateAbsence(CreateAbsenceDto absenceDto, string id);
+        Task<Absence> CreateAbsence(CreateAbsenceDto absenceDto, User user);
         Task AddFileToAbsence(CreateConfirmationFileDto fileDto, Guid absenceId);
         Task DeleteFile(Guid fileId);
         Task<List<AbsenceDto>?> GetAllAbsences(string id, AbsenceQuery query);

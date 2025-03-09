@@ -9,14 +9,14 @@ namespace api.Mappers
 {
     public static class AbsenceMapper
     {
-        public static Absence ToAbsence(this CreateAbsenceDto absenceDto, string studentId) {
+        public static Absence ToAbsence(this CreateAbsenceDto absenceDto, Student student) {
             return new Absence {
                 Id = new Guid(),
                 From = absenceDto.From,
                 To = absenceDto.To,
                 Reason = absenceDto.Reason,
                 Status = AbsenceStatus.Checking,
-                StudentId = studentId
+                Student = student,
             };
         }
         public static AbsenceDto ToAbsenceDto(this Absence absence) {

@@ -64,7 +64,7 @@ builder.Services.AddSwaggerGen(option =>
 });
 
 builder.Services.AddDbContext<ApplicationDBContext>(options => {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("SonyaConnection"));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("JaneConnection"));
 });
 
 builder.Services.AddIdentity<User, IdentityRole>(options => {
@@ -102,7 +102,7 @@ builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IFacultyService, FacultyService>();
 builder.Services.AddScoped<IFileService, FileService>();
 builder.Services.AddScoped<IAbsenceService, AbsenceService>();
-builder.Services.AddScoped<IStudentRepository, StudentRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 var app = builder.Build();
 

@@ -9,28 +9,27 @@ namespace api.Mappers
 {
     public static class StudentMapper
     {
-        public static Student ToStudentFromRegisterDto(this RegisterStudentDto registerDto) 
+        public static User ToUserFromRegisterDto(this RegisterUserDto registerDto) 
         {
-            return new Student{
+            return new User
+            {
                 Name = registerDto.Name,
                 Surname = registerDto.Surname,
                 Patronymic = registerDto.Patronymic,
                 Email = registerDto.Email,
                 UserName = registerDto.Email,
-                PhoneNumber = registerDto.PhoneNumber,
-                Role = Role.Student
+                PhoneNumber = registerDto.PhoneNumber
             };
         }
 
-        public static ProfileDto ToProfileDto(this User student) 
+        public static ProfileDto ToProfileDto(this User user) 
         {
             return new ProfileDto{
-                Id = new Guid(student.Id),
-                Name = student.Name,
-                Surname = student.Surname,
-                Patronymic = student.Patronymic,
-                Email = student.Email,
-                PhoneNumber = student.PhoneNumber
+                Name = user.Name,
+                Surname = user.Surname,
+                Patronymic = user.Patronymic,
+                Email = user.Email,
+                PhoneNumber = user.PhoneNumber
             };
         }
     }

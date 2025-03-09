@@ -19,9 +19,10 @@ namespace api.Controllers
     public class AbsenceController : ControllerBase
     {
         private readonly IAbsenceService _absenceService;
-        private readonly IStudentRepository _studentRepository;
+        private readonly IUserRepository _studentRepository;
 
-        public AbsenceController(IAbsenceService absenceService, IStudentRepository studentRepository)
+
+        public AbsenceController(IAbsenceService absenceService, IUserRepository studentRepository)
         {
             _absenceService = absenceService;
             _studentRepository = studentRepository;
@@ -34,18 +35,19 @@ namespace api.Controllers
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
             var username = User.GetUsername();
-            var user = await _studentRepository.FindStudent(username);
-            if (user == null)
+            var userRep = await _studentRepository.FindUser(username);
+            if (userRep == null)
             {
                 return Unauthorized();
             }
+
             if (absenceDto.From > absenceDto.To) {
                 return BadRequest(new Response {
                     Status = "Error",
                     Message = "The From date can't be later then To date"
                 });
             }
-            await _absenceService.CreateAbsence(absenceDto, user.Id);
+            await _absenceService.CreateAbsence(absenceDto, userRep);
             return Created();
         }
 
@@ -56,7 +58,7 @@ namespace api.Controllers
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
             var username = User.GetUsername();
-            var user = await _studentRepository.FindStudent(username);
+            var user = await _studentRepository.FindUser(username);
             if (user == null)
             {
                 return Unauthorized();
@@ -68,7 +70,7 @@ namespace api.Controllers
                     Message = $"Absence with id={id} was not found in database"
                 });
             }
-            if (absence.StudentId != user.Id) {
+            if (absence.Student.User.Id != user.Id) {
                 return StatusCode(403, new Response {
                    Status = "Error",
                     Message = "You can only edit your absences" 
@@ -86,7 +88,7 @@ namespace api.Controllers
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
             var username = User.GetUsername();
-            var user = await _studentRepository.FindStudent(username);
+            var user = await _studentRepository.FindUser(username);
             if (user == null)
             {
                 return Unauthorized();
@@ -99,7 +101,7 @@ namespace api.Controllers
                 });
             }
             var absence = await _absenceService.FindAbsence(file.AbsenceId);
-            if (absence.StudentId != user.Id) {
+            if (absence != null && absence.Student.User.Id != user.Id) {
                 return StatusCode(403, new Response {
                    Status = "Error",
                     Message = "You can only delete your files" 
@@ -116,7 +118,7 @@ namespace api.Controllers
         public async Task<IActionResult> GetAbsences([FromQuery] AbsenceQuery query)
         {
             var username = User.GetUsername();
-            var user = await _studentRepository.FindStudent(username);
+            var user = await _studentRepository.FindUser(username);
             if (user == null)
             {
                 return Unauthorized();
@@ -132,7 +134,7 @@ namespace api.Controllers
         public async Task<IActionResult> EditAbsence([FromRoute] Guid id, [FromBody] EditAbsenceDto editAbsenceDto)
         {
             var username = User.GetUsername();
-            var user = await _studentRepository.FindStudent(username);
+            var user = await _studentRepository.FindUser(username);
             if (user == null)
             {
                 return Unauthorized();
@@ -145,7 +147,7 @@ namespace api.Controllers
                     Message = $"Absence with id={id} was not found in database"
                 });
             }
-            if (absence.StudentId != user.Id) {
+            if (absence.Student.User.Id != user.Id) {
                 return StatusCode(403, new Response {
                    Status = "Error",
                     Message = "You can only edit your absences" 
