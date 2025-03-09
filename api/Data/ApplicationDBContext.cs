@@ -14,20 +14,38 @@ namespace api.Data
         public ApplicationDBContext(DbContextOptions dbContextOptions)
         : base(dbContextOptions)
         {
-            
+            Database.EnsureCreated();
         }
 
+        public DbSet<User> Users { get; set; }
         public DbSet<Student> Students { get; set; }
-        public DbSet<User> Admins {get; set; }
+        public DbSet<Teacher> Teachers { get; set; }
+        public DbSet<Department> Departments { get; set; }
         public DbSet<Faculty> Faculties { get; set; }
         public DbSet<Group> Groups { get; set; }
         public DbSet<StudentGroup> StudentGroup { get; set; }
         public DbSet<Absence> Absences { get; set; }
         public DbSet<ConfirmationFile> ConfirmationFiles { get; set; }
 
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+
+            //builder.Entity<User>()
+            //    .HasOne(u => u.Student)
+            //    .WithOne(s => s.User)
+            //    .HasForeignKey<Student>(s => s.Id);
+
+            //builder.Entity<User>()
+            //    .HasOne(u => u.Teacher)
+            //    .WithOne(t => t.User)
+            //    .HasForeignKey<Teacher>(t => t.Id);
+
+            //builder.Entity<User>()
+            //    .HasOne(u => u.Department)
+            //    .WithOne(d => d.User)
+            //    .HasForeignKey<Department>(d => d.Id);
 
             builder.Entity<StudentGroup>(x => x.HasKey(s => new { s.StudentId, s.GroupId }));
 
@@ -40,31 +58,6 @@ namespace api.Data
                 .HasOne(u => u.Group)
                 .WithMany(u => u.Students)
                 .HasForeignKey(s => s.GroupId);
-
-            List<IdentityRole> roles = new List<IdentityRole>
-            {
-                new IdentityRole
-                {
-                    Name = "Admin",
-                    NormalizedName = "ADMIN"
-                },
-                new IdentityRole
-                {
-                    Name = "Student",
-                    NormalizedName = "STUDENT"
-                },
-                new IdentityRole
-                {
-                    Name = "Teacher",
-                    NormalizedName = "TEACHER"
-                },
-                new IdentityRole
-                {
-                    Name = "Department",
-                    NormalizedName = "DEPARTMENT"
-                }
-            };
-            builder.Entity<IdentityRole>().HasData(roles);
 
         }
 

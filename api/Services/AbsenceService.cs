@@ -32,9 +32,12 @@ namespace api.Services
             await _context.SaveChangesAsync();
         }
 
-        public async Task<Absence> CreateAbsence(CreateAbsenceDto absenceDto, string id)
+        public async Task<Absence> CreateAbsence(CreateAbsenceDto absenceDto, User userRep)
         {
-            var absence = absenceDto.ToAbsence(id);
+
+            var user = await _context.Users.Include(u => u.Student).FirstOrDefaultAsync();
+
+            var absence = absenceDto.ToAbsence(user.Student);
             await _context.Absences.AddAsync(absence);
             await _context.SaveChangesAsync();
             return absence;
@@ -76,7 +79,7 @@ namespace api.Services
         public async Task<List<AbsenceDto>?> GetAllAbsences(string id, AbsenceQuery query)
         {
             var absencesQuery = _context.Absences
-                .Where(a => a.StudentId == id)
+                .Where(a => a.Student.User.Id == id)
                 .AsQueryable();
 
             if (!query.Statuses.IsNullOrEmpty()) {

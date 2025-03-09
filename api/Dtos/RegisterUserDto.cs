@@ -9,7 +9,7 @@ using api.Validations;
 
 namespace api.Dtos
 {
-    public class RegisterStudentDto
+    public class RegisterUserDto
     {
         [Required]
         public string Surname { get; set; } = string.Empty;
@@ -23,7 +23,6 @@ namespace api.Dtos
         public string Password { get; set; } = string.Empty;
         [PhoneNumber]
         public string PhoneNumber { get; set; } = string.Empty;
-        [Required]
-        public List<Guid> Groups { get; set; } = new List<Guid>();
+        
     }
 }

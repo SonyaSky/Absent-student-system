@@ -18,27 +18,27 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace api.Controllers
 {
-    [Route("api/student")]
+    [Route("api/user")]
     [ApiController]
-    public class StudentController: ControllerBase
+    public class UserController: ControllerBase
     {
-        private readonly IStudentRepository _studentRepository;
+        private readonly IUserRepository _userRepository;
         private readonly IFacultyService _facultyService;
 
-        public StudentController(IFacultyService facultyService, IStudentRepository studentRepository)
+        public UserController(IFacultyService facultyService, IUserRepository userRepository)
         {
-            _studentRepository = studentRepository;
+            _userRepository = userRepository;
             _facultyService = facultyService;
         }
 
         [HttpPost("register")]
         [AllowAnonymous]
-        [SwaggerOperation(Summary = "Register a new student")]
-        public async Task<IActionResult> Register([FromBody] RegisterStudentDto registerDto) {
+        [SwaggerOperation(Summary = "Register a new user")]
+        public async Task<IActionResult> Register([FromBody] RegisterUserDto registerDto) {
             try 
             {
                 if (!ModelState.IsValid) return BadRequest(ModelState);
-                var existingUser  = await _studentRepository.StudentExists(registerDto.Email);
+                var existingUser  = await _userRepository.UserExists(registerDto.Email);
                 if (existingUser)
                 {
                     return BadRequest(
@@ -49,15 +49,15 @@ namespace api.Controllers
                         }
                     );
                 }
-                foreach (var group in registerDto.Groups) {
+                /*foreach (var group in registerDto.Groups) {
                 if (!await _facultyService.DoesGroupExist(group)) {
                     return BadRequest( new Response{
                         Status = "Error",
                         Message = $"Group with id={group} doesn't exist"
                     });
                 }
-            }
-                var token = await _studentRepository.CreateStudentAsync(registerDto);
+            }*/
+                var token = await _userRepository.CreateUserAsync(registerDto);
                 if (token == null) {
                     return BadRequest( new Response{
                         Status = "Error",
@@ -82,7 +82,7 @@ namespace api.Controllers
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
 
-            var user = await _studentRepository.StudentExists(loginDto.Email);
+            var user = await _userRepository.UserExists(loginDto.Email);
             if (user == false) {
                 return BadRequest(
                     new Response
@@ -92,7 +92,7 @@ namespace api.Controllers
                     }
                 );
             }
-            var token = await _studentRepository.LoginStudentAsync(loginDto);
+            var token = await _userRepository.LoginUserAsync(loginDto);
             if (token == null) 
             {
                 return BadRequest(
@@ -116,7 +116,7 @@ namespace api.Controllers
             if (username == null) {
                 return Unauthorized();
             }
-            var profile = await _studentRepository.GetProfileAsync(username);
+            var profile = await _userRepository.GetProfileAsync(username);
             if (profile == null) {
                 return Unauthorized();
             }
@@ -130,14 +130,14 @@ namespace api.Controllers
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
             var username = User.GetUsername();
-            var user = await _studentRepository.FindStudent(username);
+            var user = await _userRepository.FindUser(username);
             if (user == null)
             {
                 return Unauthorized();
             }
             if (user.Email != profileDto.Email)
             {
-                var existingUser  = await _studentRepository.StudentExists(profileDto.Email);
+                var existingUser  = await _userRepository.UserExists(profileDto.Email);
                 if (existingUser)
                 {
                     return BadRequest(
@@ -157,7 +157,7 @@ namespace api.Controllers
                     });
                 }
             }
-            var result = await _studentRepository.EditProfileAsync(user, profileDto);
+            var result = await _userRepository.EditProfileAsync(user, profileDto);
             if (result == null)
             {
                 return BadRequest(new Response {

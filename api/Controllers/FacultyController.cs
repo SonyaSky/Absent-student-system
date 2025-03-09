@@ -29,7 +29,12 @@ namespace api.Controllers
             {
                 return BadRequest();
             }
-            var faculty = new Faculty(name);
+            var faculty = new Faculty()
+            {
+               Id = Guid.NewGuid(), 
+               Name = name, 
+               Groups = []
+            };
             await _facultyService.CreateFaculty(faculty);
             return Ok(faculty);
         }
