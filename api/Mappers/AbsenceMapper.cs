@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using api.Dtos;
 using api.Dtos.Absence;
+using api.Dtos.Faculty;
 using api.Models;
 
 namespace api.Mappers
@@ -27,6 +29,32 @@ namespace api.Mappers
                 To = absence.To,
                 Reason = absence.Reason,
                 Status = absence.Status,
+            };
+        }
+
+        public static StudentAbsenceDto ToStudentAbsenceDto(this Absence absence, User user, Student student, List<StudentGroup> groups)
+        {
+            var groupsDto = new List<GroupDto>();
+            var facultiesDto = new List<FacultyDto>();
+            var absencesDto = new List<AbsenceDto>();
+
+            foreach (var studentGroup in groups)
+            {
+                groupsDto.Add(studentGroup.Group.ToGroupDto());
+                facultiesDto.Add(studentGroup.Group.Faculty.ToFacultyDto());
+            }
+
+
+
+            return new StudentAbsenceDto
+            {
+                StudentId = student.Id,
+                Name = user.Name,
+                Patronymic = user.Patronymic,
+                Surname = user.Surname,
+                Faculties = facultiesDto,
+                Groups = groupsDto,
+                Absences = { absence.ToAbsenceDto() },
             };
         }
 
