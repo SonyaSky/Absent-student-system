@@ -12,7 +12,7 @@ namespace api.Models
         public DateTime To { get; set; }
         public string Reason { get; set; } = string.Empty;
         public AbsenceStatus Status { get; set; }
-        
+        public Guid StudentId { get; set; }
 
         public List<ConfirmationFile> Files { get; set; } = new List<ConfirmationFile>();
         public Student Student { get; set; }        

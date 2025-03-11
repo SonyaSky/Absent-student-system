@@ -3,13 +3,11 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
-using api.Dtos.Faculty;
-using api.Models;
 using api.Validations;
 
-namespace api.Dtos
+namespace api.Dtos.Student
 {
-    public class EditProfileDto
+    public class StudentEditProfileDto
     {
         [Required]
         [EmailAddress]
@@ -25,5 +23,7 @@ namespace api.Dtos
         public string Patronymic { get; set; } = string.Empty;
         [PhoneNumber]
         public string PhoneNumber { get; set; } = string.Empty;
+        [Required]
+        public List<Guid> Groups { get; set; } = new List<Guid>();
     }
 }

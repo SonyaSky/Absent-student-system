@@ -23,25 +23,44 @@ namespace api.Services
             _fileService = fileService;
         }
 
-        public async Task AddFileToAbsence(CreateConfirmationFileDto fileDto, Guid absenceId)
+        public async Task<ConfirmationFileDto> AddFileToAbsence(CreateConfirmationFileDto fileDto, Guid absenceId)
         {
             var file = fileDto.ToConfirmationFile(absenceId);
             var fileName = await _fileService.SaveFileAsync(fileDto.File);
             file.File = fileName;
             await _context.ConfirmationFiles.AddAsync(file);
             await _context.SaveChangesAsync();
+            return file.ToConfirmationFileDto();
         }
 
         public async Task<Absence> CreateAbsence(CreateAbsenceDto absenceDto, User userRep)
         {
 
-            var user = await _context.Users.Include(u => u.Student).FirstOrDefaultAsync();
+            var user = await _context.Users.Include(u => u.Student).FirstOrDefaultAsync(u => u.Id == userRep.Id);
+            if (user == null)
+            {
+                throw new InvalidOperationException("User  not found.");
+            }
 
+            if (user.Student == null)
+            {
+                throw new InvalidOperationException("User  does not have an associated student.");
+            }
             var absence = absenceDto.ToAbsence(user.Student);
             await _context.Absences.AddAsync(absence);
             await _context.SaveChangesAsync();
             return absence;
             //надо еще их в очередь ставить для деканата на проверку
+        }
+
+        public async Task DeleteAbsence(Guid id)
+        {
+            var absence = await FindAbsence(id);
+            foreach (var file in absence.Files) {
+                _fileService.DeleteFile(file.File);
+            }
+            _context.Absences.Remove(absence);
+            await _context.SaveChangesAsync();
         }
 
         public async Task DeleteFile(Guid fileId)
