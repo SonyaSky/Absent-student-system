@@ -13,6 +13,12 @@ namespace api.Models
         [ForeignKey(nameof(UserId))]
         public User User { get; set; }
         public List<StudentGroup> Groups { get; set; } = new List<StudentGroup>();
+
+        public Student(string userId)
+        {
+            Id = new Guid();
+            UserId = userId;
+        }
     }
     
 }

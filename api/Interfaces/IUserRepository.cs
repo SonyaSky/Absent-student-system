@@ -16,8 +16,6 @@ namespace api.Interfaces
         Task<TokenResponse?> LoginUserAsync(LoginDto loginDto);
         Task<ProfileDto?> GetProfileAsync(string username);
         Task<EditProfileDto?> EditProfileAsync(User student, EditProfileDto editProfileDto);
-        Task<List<GroupDto>> FindGroups(Guid studentId);
         Task<User?> FindUser(string username);
-        //Task AddGroups(List<Guid> groups, string id);
     }
 }
