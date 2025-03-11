@@ -28,35 +28,12 @@ namespace api.Repository
             _context = context;
         }
 
-        /*public async Task AddGroups(List<Guid> groups, string id)
-        {
-            var newStudentGroups = groups
-                .Select(g => new StudentGroup(id, g))
-                .ToList();
-            await _context.StudentGroup.AddRangeAsync(newStudentGroups);
-            await _context.SaveChangesAsync();
-        }*/
-
         public async Task<TokenResponse?> CreateUserAsync(RegisterUserDto registerUserDto)
         {
             var user = registerUserDto.ToUserFromRegisterDto();
             var createdUser = await _userManager.CreateAsync(user, registerUserDto.Password);
             if (createdUser.Succeeded)
             {
-                /*var role
-                 * 
-                 * 
-                 * 
-                 * 
-                 * Result = await _userManager.AddToRoleAsync(student, "Student");
-                await AddGroups(registerStudentDto.Groups, student.Id);
-                if (roleResult.Succeeded) {
-                    return new TokenResponse {
-                        Token = _tokenService.CreateToken(student)
-                    };
-                }
-                return null;*/
-
                 return new TokenResponse
                 {
                     Token = _tokenService.CreateToken(user)
@@ -77,12 +54,6 @@ namespace api.Repository
             student.Patronymic = editProfileDto.Patronymic;
             student.PhoneNumber = editProfileDto.PhoneNumber;
 
-            var groupsToDelete = await _context.StudentGroup
-                .Where(s => s.StudentId.ToString() == student.Id.ToString())
-                .ToListAsync();
-            _context.StudentGroup.RemoveRange(groupsToDelete);
-            //await AddGroups(editProfileDto.Groups, student.Id);
-
             var result = await _userManager.UpdateAsync(student);
             if (!result.Succeeded)
             {
@@ -92,14 +63,6 @@ namespace api.Repository
             return editProfileDto;
         }
 
-        public async Task<List<GroupDto>> FindGroups(Guid studentId)
-        {
-            var groups = await _context.StudentGroup
-                .Where(s => s.StudentId == studentId)
-                .Select(s => s.Group.ToGroupDto()) 
-                .ToListAsync();
-            return groups;
-        }
 
         public async Task<User?> FindUser(string username)
         {
@@ -114,14 +77,12 @@ namespace api.Repository
             {
                 return null;
             }
-            var groups = await FindGroups(new Guid(student.Id));
             return new ProfileDto{
                 Name = student.Name,
                 Surname = student.Surname,
                 Patronymic = student.Patronymic,
                 Email = student.Email,
                 PhoneNumber = student.PhoneNumber,
-                Groups = groups
             };
         }
 

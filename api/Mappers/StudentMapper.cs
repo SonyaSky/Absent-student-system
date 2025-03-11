@@ -21,6 +21,18 @@ namespace api.Mappers
                 PhoneNumber = registerDto.PhoneNumber
             };
         }
+        public static User ToUserFromRegisterDto(this RegisterStudentDto registerDto) 
+        {
+            return new User
+            {
+                Name = registerDto.Name,
+                Surname = registerDto.Surname,
+                Patronymic = registerDto.Patronymic,
+                Email = registerDto.Email,
+                UserName = registerDto.Email,
+                PhoneNumber = registerDto.PhoneNumber
+            };
+        }
 
         public static ProfileDto ToProfileDto(this User user) 
         {
