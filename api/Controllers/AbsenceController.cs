@@ -19,10 +19,10 @@ namespace api.Controllers
     public class AbsenceController : ControllerBase
     {
         private readonly IAbsenceService _absenceService;
-        private readonly IUserRepository _studentRepository;
+        private readonly IStudentRepository _studentRepository;
 
 
-        public AbsenceController(IAbsenceService absenceService, IUserRepository studentRepository)
+        public AbsenceController(IAbsenceService absenceService, IStudentRepository studentRepository)
         {
             _absenceService = absenceService;
             _studentRepository = studentRepository;
@@ -40,15 +40,19 @@ namespace api.Controllers
             {
                 return Unauthorized();
             }
-
+            var student = await _studentRepository.FindStudent(username);
+            if (student == null)
+            {
+                return Unauthorized();
+            }
             if (absenceDto.From > absenceDto.To) {
                 return BadRequest(new Response {
                     Status = "Error",
                     Message = "The From date can't be later then To date"
                 });
             }
-            await _absenceService.CreateAbsence(absenceDto, userRep);
-            return Created();
+            var absence = await _absenceService.CreateAbsence(absenceDto, userRep);
+            return Ok(absence.ToAbsenceDto());
         }
 
         [HttpPost("{id}/file")]
@@ -58,7 +62,7 @@ namespace api.Controllers
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
             var username = User.GetUsername();
-            var user = await _studentRepository.FindUser(username);
+            var user = await _studentRepository.FindStudent(username);
             if (user == null)
             {
                 return Unauthorized();
@@ -70,15 +74,15 @@ namespace api.Controllers
                     Message = $"Absence with id={id} was not found in database"
                 });
             }
-            if (absence.Student.User.Id != user.Id) {
+            if (absence.Student.Id != user.Id) {
                 return StatusCode(403, new Response {
                    Status = "Error",
                     Message = "You can only edit your absences" 
                 });
             }
 
-            await _absenceService.AddFileToAbsence(fileDto, id);
-            return Created();
+            var file = await _absenceService.AddFileToAbsence(fileDto, id);
+            return Ok(file);
         }
 
         [HttpDelete("file/{id}")]
@@ -88,7 +92,7 @@ namespace api.Controllers
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
             var username = User.GetUsername();
-            var user = await _studentRepository.FindUser(username);
+            var user = await _studentRepository.FindStudent(username);
             if (user == null)
             {
                 return Unauthorized();
@@ -101,7 +105,7 @@ namespace api.Controllers
                 });
             }
             var absence = await _absenceService.FindAbsence(file.AbsenceId);
-            if (absence != null && absence.Student.User.Id != user.Id) {
+            if (absence != null && absence.Student.Id != user.Id) {
                 return StatusCode(403, new Response {
                    Status = "Error",
                     Message = "You can only delete your files" 
@@ -123,9 +127,44 @@ namespace api.Controllers
             {
                 return Unauthorized();
             }
+            var student = await _studentRepository.FindStudent(username);
+            if (student == null)
+            {
+                return Unauthorized();
+            }
 
             var absences = await _absenceService.GetAllAbsences(user.Id, query);
             return Ok(absences);
+        }
+
+        [HttpDelete("{id}")]
+        [Authorize]
+        [SwaggerOperation(Summary = "Delete absence")]
+        public async Task<IActionResult> DeleteAbsence([FromRoute] Guid id)
+        {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+            var username = User.GetUsername();
+            var user = await _studentRepository.FindStudent(username);
+            if (user == null)
+            {
+                return Unauthorized();
+            }
+            var absence = await _absenceService.FindAbsence(id);
+            if (absence == null) {
+                return NotFound(new Response {
+                    Status = "Error",
+                    Message = $"Absence with id={id} was not found in database"
+                });
+            }
+            if (absence.Student.Id != user.Id) {
+                return StatusCode(403, new Response {
+                   Status = "Error",
+                    Message = "You can only edit your absences" 
+                });
+            }
+
+            await _absenceService.DeleteAbsence(id);
+            return Ok();
         }
 
         [HttpPut("{id}")]
@@ -134,7 +173,7 @@ namespace api.Controllers
         public async Task<IActionResult> EditAbsence([FromRoute] Guid id, [FromBody] EditAbsenceDto editAbsenceDto)
         {
             var username = User.GetUsername();
-            var user = await _studentRepository.FindUser(username);
+            var user = await _studentRepository.FindStudent(username);
             if (user == null)
             {
                 return Unauthorized();
@@ -147,7 +186,7 @@ namespace api.Controllers
                     Message = $"Absence with id={id} was not found in database"
                 });
             }
-            if (absence.Student.User.Id != user.Id) {
+            if (absence.Student.Id != user.Id) {
                 return StatusCode(403, new Response {
                    Status = "Error",
                     Message = "You can only edit your absences" 

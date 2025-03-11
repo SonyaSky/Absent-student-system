@@ -16,6 +16,7 @@ namespace api.Mappers
                 To = absenceDto.To,
                 Reason = absenceDto.Reason,
                 Status = AbsenceStatus.Checking,
+                StudentId = student.Id,
                 Student = student,
             };
         }
