@@ -54,7 +54,8 @@ namespace api.Mappers
                 Patronymic = user.Patronymic,
                 Email = user.Email,
                 Id = user.Id,
-                PhoneNumber = user.PhoneNumber
+                PhoneNumber = user.PhoneNumber,
+                Roles = user.Roles
             };
         }
     }

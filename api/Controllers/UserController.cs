@@ -99,9 +99,22 @@ namespace api.Controllers
             return Ok(token);
         }
 
+        [HttpGet("all")]
+        [Authorize]
+        [SwaggerOperation(Summary = "Get all users")]
+        public async Task<IActionResult> GetAllUsers()
+        {
+            var username = User.GetUsername();
+            if (username == null) {
+                return Unauthorized();
+            }
+            var users = await _userRepository.GetAllUsers();
+            return Ok(users);
+        }
+
         [HttpGet("profile")]
         [Authorize]
-        [SwaggerOperation(Summary = "Get user's profile (for teacher/admin)")]
+        [SwaggerOperation(Summary = "Get user's profile ")]
         public async Task<IActionResult> GetProfile()
         {
             var username = User.GetUsername();
@@ -117,7 +130,7 @@ namespace api.Controllers
 
         [HttpPut("profile")]
         [Authorize]
-        [SwaggerOperation(Summary = "Edit user's profile (for teacher/admin)")]
+        [SwaggerOperation(Summary = "Edit user's profile ")]
         public async Task<IActionResult> EditProfile([FromBody] EditProfileDto profileDto)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);

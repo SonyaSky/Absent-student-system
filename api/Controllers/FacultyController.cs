@@ -47,7 +47,7 @@ namespace api.Controllers
                 return BadRequest();
             }
             var faculty = await _facultyService.DoesFacultyExist(id);
-            if (faculty != null) {
+            if (faculty == null) {
                 return BadRequest(new Response {
                     Status = "Error",
                     Message = $"Faculty with id={id} doesn't exists"
@@ -71,7 +71,7 @@ namespace api.Controllers
         [SwaggerOperation(Summary = "Get groups of a faculty")]
         public async Task<IActionResult> GetGroups([FromRoute] Guid id) {
             var faculty = await _facultyService.DoesFacultyExist(id);
-            if (faculty != null) {
+            if (faculty == null) {
                 return BadRequest(new Response {
                     Status = "Error",
                     Message = $"Faculty with id={id} doesn't exists"

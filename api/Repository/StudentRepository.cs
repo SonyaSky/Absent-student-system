@@ -41,6 +41,7 @@ namespace api.Repository
             var createdUser = await _userManager.CreateAsync(user, registerStudentDto.Password);
             var student = new Student(user.Id);
             await _context.Students.AddAsync(student);
+            await _context.SaveChangesAsync();
             await AddGroups(registerStudentDto.Groups, student.Id);
             if (createdUser.Succeeded)
             {

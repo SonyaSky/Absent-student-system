@@ -38,6 +38,7 @@ namespace api.Services
                     User = user
                 };
                 await _context.Admins.AddAsync(admin);
+                await _context.SaveChangesAsync();
                 return new TokenResponse
                 {
                     Token = _tokenService.CreateToken(user)
