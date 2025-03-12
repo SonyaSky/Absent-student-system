@@ -121,7 +121,8 @@ namespace api.Repository
                 Patronymic = student.Patronymic,
                 Email = student.Email,
                 PhoneNumber = student.PhoneNumber,
-                Groups = groups
+                Groups = groups,
+                Roles = student.Roles,
             };
         }
 

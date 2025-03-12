@@ -1,5 +1,6 @@
 ﻿using api.Dtos.Absence;
 using api.Interfaces;
+using api.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
@@ -35,6 +36,16 @@ namespace api.Controllers
             [Required] Guid absenceId)
         {
             await _departmentService.RejectAbsence(absenceId, Request.Headers.Authorization.ToString().Replace("Bearer ", ""));
+            return Ok();
+        }
+
+        [HttpPut("role")]
+        [Authorize]
+        [SwaggerOperation(Summary = "Give a role")]
+        public async Task<IActionResult> GiveRole(
+            [Required] Guid userId)
+        {
+            await _departmentService.GiveRole(userId, Request.Headers.Authorization.ToString().Replace("Bearer ", ""));
             return Ok();
         }
     }

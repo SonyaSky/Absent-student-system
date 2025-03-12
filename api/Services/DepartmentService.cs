@@ -64,5 +64,43 @@ namespace api.Services
 
             await _context.SaveChangesAsync();
         }
+
+        public async Task GiveRole(Guid userId, string authorizationString)
+        {
+            var departmentUserEmail = TokenService.GetUserIdFromToken(authorizationString);
+            var departmentFound = await _userManager.FindByEmailAsync(departmentUserEmail);
+            bool department = _context.Departments.Any(d => d.UserId == departmentFound.Id);
+
+            if (!department)
+            {
+                throw new Exception("You are not department worker");
+            }
+
+            var userFound = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId.ToString());
+            if (userFound == null)
+            {
+                throw new Exception("This user does not exist");
+            }
+
+            if (!userFound.Roles.Contains(Role.Teacher))
+            {
+                userFound.Roles.Add(Role.Teacher);
+            }
+
+            var teacherExists = _context.Teachers.Any(t => t.UserId == userId.ToString());
+            if (!teacherExists)
+            {
+                var teacher = new Teacher
+                {
+                    Id = new Guid(),
+                    User = userFound,
+                    UserId = userFound.Id
+                };
+
+                _context.Teachers.Add(teacher);
+            }
+
+            await _context.SaveChangesAsync();
+        }
     }
 }

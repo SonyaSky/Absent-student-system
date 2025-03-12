@@ -1,4 +1,5 @@
 ﻿using api.Dtos.Absence;
+using api.Models;
 
 namespace api.Interfaces
 {
@@ -6,5 +7,6 @@ namespace api.Interfaces
     {
         Task ApproveAbsence(Guid absenceId, string authorizationString);
         Task RejectAbsence(Guid absenceId, string authorizationString);
+        Task GiveRole(Guid userId, string authorizationString);
     }
 }
