@@ -70,21 +70,32 @@ namespace api.Repository
             return student;
         }
 
+        public async Task<List<UserDto>?> GetAllUsers()
+        {
+            var allUsers = await _userManager.Users.Select(u => u.ToUserDto()).ToListAsync();
+            var users = new List<UserDto>();
+            foreach (var user in allUsers) {
+                if (!user.Roles.Contains(Role.Admin) && !(user.Roles.Contains(Role.Teacher) && user.Roles.Contains(Role.Department))) {
+                    users.Add(user);
+                }
+            }
+            return users;
+        }
+
         public async Task<ProfileDto?> GetProfileAsync(string username)
         {
-            var student = await FindUser(username);
-            if (student == null)
+            var user = await FindUser(username);
+            if (user == null)
             {
                 return null;
             }
             return new ProfileDto{
-                Name = student.Name,
-                Surname = student.Surname,
-                Patronymic = student.Patronymic,
-                Email = student.Email,
-                PhoneNumber = student.PhoneNumber,
-                Groups = groups,
-                Roles = student.Roles,
+                Name = user.Name,
+                Surname = user.Surname,
+                Patronymic = user.Patronymic,
+                Email = user.Email,
+                PhoneNumber = user.PhoneNumber,
+                Roles = user.Roles,
             };
         }
 

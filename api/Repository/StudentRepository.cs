@@ -37,6 +37,7 @@ namespace api.Repository
         public async Task<TokenResponse?> CreateStudentAsync(RegisterStudentDto registerStudentDto)
         {
             var user = registerStudentDto.ToUserFromRegisterDto();
+            user.Roles.Add(Role.Student);
             var createdUser = await _userManager.CreateAsync(user, registerStudentDto.Password);
             var student = new Student(user.Id);
             await _context.Students.AddAsync(student);

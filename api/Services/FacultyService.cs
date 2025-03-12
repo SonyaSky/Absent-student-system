@@ -33,13 +33,10 @@ namespace api.Services
             return group;
         }
 
-        public async Task<bool> DoesFacultyExist(Guid facultyId)
+        public async Task<Faculty?> DoesFacultyExist(Guid facultyId)
         {
             var faculty = await _context.Faculties.FirstOrDefaultAsync(f => f.Id == facultyId);
-            if (faculty == null) {
-                return false;
-            } 
-            return true;
+            return faculty;
         }
 
         public async Task<List<FacultyDto>> GetFacultiesAsync()

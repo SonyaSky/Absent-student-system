@@ -49,14 +49,6 @@ namespace api.Controllers
                         }
                     );
                 }
-                /*foreach (var group in registerDto.Groups) {
-                if (!await _facultyService.DoesGroupExist(group)) {
-                    return BadRequest( new Response{
-                        Status = "Error",
-                        Message = $"Group with id={group} doesn't exist"
-                    });
-                }
-            }*/
                 var token = await _userRepository.CreateUserAsync(registerDto);
                 if (token == null) {
                     return BadRequest( new Response{
