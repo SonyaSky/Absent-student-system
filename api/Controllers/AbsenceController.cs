@@ -133,7 +133,7 @@ namespace api.Controllers
                 return Unauthorized();
             }
 
-            var absences = await _absenceService.GetAllAbsences(user.Id, query);
+            var absences = await _absenceService.GetAllAbsences(student.Id, query);
             return Ok(absences);
         }
 

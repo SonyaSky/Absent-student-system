@@ -13,7 +13,7 @@ namespace api.Interfaces
         Task<Absence> CreateAbsence(CreateAbsenceDto absenceDto, User user);
         Task<ConfirmationFileDto> AddFileToAbsence(CreateConfirmationFileDto fileDto, Guid absenceId);
         Task DeleteFile(Guid fileId);
-        Task<List<AbsenceDto>?> GetAllAbsences(string id, AbsenceQuery query);
+        Task<List<AbsenceDto>?> GetAllAbsences(Guid id, AbsenceQuery query);
         Task<Absence?> FindAbsence(Guid id);
         Task<ConfirmationFile?> FindFile(Guid id);
         Task<Absence?> EditAbsence(Guid id, EditAbsenceDto editAbsenceDto);

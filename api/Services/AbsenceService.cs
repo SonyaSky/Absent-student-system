@@ -50,7 +50,7 @@ namespace api.Services
             await _context.Absences.AddAsync(absence);
             await _context.SaveChangesAsync();
             return absence;
-            //надо еще их в очередь ставить для деканата на проверку
+            
         }
 
         public async Task DeleteAbsence(Guid id)
@@ -95,10 +95,14 @@ namespace api.Services
             return file;
         }
 
-        public async Task<List<AbsenceDto>?> GetAllAbsences(string id, AbsenceQuery query)
+        public async Task<List<AbsenceDto>?> GetAllAbsences(Guid id, AbsenceQuery query)
         {
+
             var absencesQuery = _context.Absences
-                .Where(a => a.Student.User.Id == id)
+                .Include(a => a.Student)
+                .Where(a => a.Student.Id == id
+                && (a.From.Year == query.Year || a.To.Year == query.Year || (query.Year > a.From.Year && query.Year < a.To.Year))
+                && (a.From.Month == query.Month || a.To.Month == query.Month || (query.Month > a.From.Month && query.Month < a.To.Month)))
                 .AsQueryable();
 
             if (!query.Statuses.IsNullOrEmpty()) {
