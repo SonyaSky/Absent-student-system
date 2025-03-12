@@ -97,6 +97,7 @@ namespace api.Services
                     UserId = userFound.Id
                 };
 
+                userFound.Teacher = teacher;
                 _context.Teachers.Add(teacher);
             }
 
