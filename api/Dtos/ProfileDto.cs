@@ -14,5 +14,9 @@ namespace api.Dtos
         public string Patronymic { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
         public string? PhoneNumber { get; set; } = string.Empty;
+
+        public List<GroupDto> Groups { get; set; } = new List<GroupDto>();
+        public List<Role> Roles { get; set; } = new List<Role>();
+
     }
 }

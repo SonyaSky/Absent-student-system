@@ -24,10 +24,11 @@ namespace api.Services
             var teacherUserEmail = TokenService.GetUserIdFromToken(authorizationString);
             var userFound = await _userManager.FindByEmailAsync(teacherUserEmail);
             bool teacher = _context.Teachers.Any(t => t.UserId == userFound.Id);
+            bool department = _context.Departments.Any(d => d.UserId == userFound.Id);
 
-            if (!teacher)
+            if (!(teacher || department))
             {
-                throw new Exception("You are not teacher");
+                throw new Exception("You are not teacher or department worker");
             }
 
             var studentAbsences = await _context.Absences
@@ -51,10 +52,11 @@ namespace api.Services
             var teacherUserEmail = TokenService.GetUserIdFromToken(authorizationString);
             var userFound = await _userManager.FindByEmailAsync(teacherUserEmail);
             bool teacher = _context.Teachers.Any(t => t.UserId == userFound.Id);
+            bool department = _context.Departments.Any(d => d.UserId == userFound.Id);
 
-            if (!teacher)
+            if (!(teacher || department))
             {
-                throw new Exception("You are not teacher");
+                throw new Exception("You are not teacher or department worker");
             }
 
             var absentStudents = await _context.Absences.Include(a => a.Student)

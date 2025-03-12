@@ -104,7 +104,9 @@ builder.Services.AddScoped<IFileService, FileService>();
 builder.Services.AddScoped<IAbsenceService, AbsenceService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ITeacherService, TeacherService>();
+builder.Services.AddScoped<IDepartmentService, DepartmentService>();
 builder.Services.AddScoped<IStudentRepository, StudentRepository>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

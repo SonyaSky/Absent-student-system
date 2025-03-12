@@ -83,6 +83,8 @@ namespace api.Repository
                 Patronymic = student.Patronymic,
                 Email = student.Email,
                 PhoneNumber = student.PhoneNumber,
+                Groups = groups,
+                Roles = student.Roles,
             };
         }
 
