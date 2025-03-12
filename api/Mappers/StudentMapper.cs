@@ -44,5 +44,19 @@ namespace api.Mappers
                 PhoneNumber = user.PhoneNumber
             };
         }
+
+        public static UserDto ToUserDto(this User user) 
+        {
+            return new UserDto
+            {
+                Name = user.Name,
+                Surname = user.Surname,
+                Patronymic = user.Patronymic,
+                Email = user.Email,
+                Id = user.Id,
+                PhoneNumber = user.PhoneNumber,
+                Roles = user.Roles
+            };
+        }
     }
 }

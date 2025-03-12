@@ -17,5 +17,6 @@ namespace api.Interfaces
         Task<ProfileDto?> GetProfileAsync(string username);
         Task<EditProfileDto?> EditProfileAsync(User student, EditProfileDto editProfileDto);
         Task<User?> FindUser(string username);
+        Task<List<UserDto>?> GetAllUsers();
     }
 }
