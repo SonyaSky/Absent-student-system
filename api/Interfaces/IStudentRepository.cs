@@ -11,7 +11,7 @@ namespace api.Interfaces
 {
     public interface IStudentRepository
     {
-        Task AddGroups(List<Guid> groups, Guid id);
+        Task AddGroups(List<Guid> groups, Guid id, Student student);
         Task<List<GroupDto>> FindGroups(Guid studentId);
         Task<Student?> FindStudent(string username);
         Task<User?> FindUser(string username);

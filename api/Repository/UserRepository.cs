@@ -75,7 +75,7 @@ namespace api.Repository
             var allUsers = await _userManager.Users.Select(u => u.ToUserDto()).ToListAsync();
             var users = new List<UserDto>();
             foreach (var user in allUsers) {
-                if (!user.Roles.Contains(Role.Admin) && !(user.Roles.Contains(Role.Teacher) && user.Roles.Contains(Role.Department))) {
+                if (!user.Roles.Contains(Role.Admin)) {
                     users.Add(user);
                 }
             }

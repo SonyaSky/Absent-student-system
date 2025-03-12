@@ -25,11 +25,12 @@ namespace api.Repository
             _tokenService = tokenService;
             _context = context;
         }
-        public async Task AddGroups(List<Guid> groups, Guid id)
+        public async Task AddGroups(List<Guid> groups, Guid id, Student student)
         {
             var newStudentGroups = groups
                 .Select(g => new StudentGroup(id, g))
                 .ToList();
+            student.Groups = newStudentGroups;
             await _context.StudentGroup.AddRangeAsync(newStudentGroups);
             await _context.SaveChangesAsync();
         }
@@ -42,7 +43,7 @@ namespace api.Repository
             var student = new Student(user.Id);
             await _context.Students.AddAsync(student);
             await _context.SaveChangesAsync();
-            await AddGroups(registerStudentDto.Groups, student.Id);
+            await AddGroups(registerStudentDto.Groups, student.Id, student);
             if (createdUser.Succeeded)
             {
                 return new TokenResponse
@@ -70,7 +71,7 @@ namespace api.Repository
                 .Where(s => s.StudentId.ToString() == student.Id.ToString())
                 .ToListAsync();
             _context.StudentGroup.RemoveRange(groupsToDelete);
-            await AddGroups(editProfileDto.Groups, student.Id);
+            await AddGroups(editProfileDto.Groups, student.Id, student);
 
             var result = await _userManager.UpdateAsync(user);
             if (!result.Succeeded)
