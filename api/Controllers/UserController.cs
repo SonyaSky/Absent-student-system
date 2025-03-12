@@ -109,7 +109,7 @@ namespace api.Controllers
 
         [HttpGet("profile")]
         [Authorize]
-        [SwaggerOperation(Summary = "Get student's profile")]
+        [SwaggerOperation(Summary = "Get user's profile (for teacher/admin)")]
         public async Task<IActionResult> GetProfile()
         {
             var username = User.GetUsername();
@@ -125,7 +125,7 @@ namespace api.Controllers
 
         [HttpPut("profile")]
         [Authorize]
-        [SwaggerOperation(Summary = "Edit student's profile")]
+        [SwaggerOperation(Summary = "Edit user's profile (for teacher/admin)")]
         public async Task<IActionResult> EditProfile([FromBody] EditProfileDto profileDto)
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -149,14 +149,6 @@ namespace api.Controllers
                     );
                 }
             }
-            foreach (var group in profileDto.Groups) {
-                if (!await _facultyService.DoesGroupExist(group)) {
-                    return BadRequest( new Response{
-                        Status = "Error",
-                        Message = $"Group with id={group} doesn't exist"
-                    });
-                }
-            }
             var result = await _userRepository.EditProfileAsync(user, profileDto);
             if (result == null)
             {
@@ -166,7 +158,7 @@ namespace api.Controllers
                 });
             }
 
-            return Ok();
+            return Ok(result);
 
         } 
 
