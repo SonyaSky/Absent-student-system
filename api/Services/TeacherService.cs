@@ -61,7 +61,9 @@ namespace api.Services
 
             var absentStudents = await _context.Absences.Include(a => a.Student)
                 .ThenInclude(s => s.Groups)
-                .ThenInclude(g => g.Group)
+                .ThenInclude(g => g.Group).ThenInclude(g => g.Faculty)
+                .Include(s => s.Student)
+                .ThenInclude(s => s.User).AsSplitQuery()
                 .Where(a => (year >= a.From.Year && year <=  a.To.Year)
                 && (month >= a.From.Month && month <= a.To.Month))
                 .ToListAsync();

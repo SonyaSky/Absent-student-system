@@ -33,6 +33,17 @@ builder.Services.AddControllers().AddNewtonsoftJson(options =>
 
 builder.Services.AddEndpointsApiExplorer();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(
+        "AllowAllOrigins",
+        corsBuilder =>
+        {
+            corsBuilder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+        }
+    );
+});
+
 builder.Services.AddSwaggerGen(option =>
 {
     option.SwaggerDoc("v1", new OpenApiInfo { Title = "InLeave Api", Version = "v1" });
@@ -64,7 +75,7 @@ builder.Services.AddSwaggerGen(option =>
 });
 
 builder.Services.AddDbContext<ApplicationDBContext>(options => {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("SonyaConnection"));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
 builder.Services.AddIdentity<User, IdentityRole>(options => {
@@ -117,6 +128,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseCors("AllowAllOrigins");
 app.UseHttpsRedirection();
 
 app.UseStaticFiles(new StaticFileOptions
