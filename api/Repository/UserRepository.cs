@@ -93,12 +93,17 @@ namespace api.Repository
             var student = await _context.Students.FirstOrDefaultAsync(s => s.UserId == user.Id);
 
             var groups = new List<Group>();
+            var faculties = new List<Faculty>();
             
             if (student != null)
             {
               groups = await _context.StudentGroup.Include(sg => sg.Group).Where(sg => sg.StudentId == student.Id)
                     .Select(sg => sg.Group).ToListAsync();
+              
+              faculties = await _context.Faculties.Include(f => f.Groups).Where(f => f.Groups.Any(g => groups.Contains(g)))
+                    .ToListAsync();
             }
+            
             
              
             return new ProfileDto{
@@ -109,6 +114,7 @@ namespace api.Repository
                 PhoneNumber = user.PhoneNumber,
                 Roles = user.Roles,
                 Groups = groups.Select(g => g.ToGroupDto()).ToList(),
+                Faculties = faculties.Select(f => f.ToFacultyDto()).ToList()
             };
         }
 

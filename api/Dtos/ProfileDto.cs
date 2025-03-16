@@ -16,6 +16,7 @@ namespace api.Dtos
         public string? PhoneNumber { get; set; } = string.Empty;
 
         public List<GroupDto> Groups { get; set; } = new List<GroupDto>();
+        public List<FacultyDto> Faculties { get; set; } = new List<FacultyDto>();
         public List<Role> Roles { get; set; } = new List<Role>();
 
     }
