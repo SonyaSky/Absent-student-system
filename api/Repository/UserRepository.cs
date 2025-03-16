@@ -89,6 +89,18 @@ namespace api.Repository
             {
                 return null;
             }
+
+            var student = await _context.Students.FirstOrDefaultAsync(s => s.UserId == user.Id);
+
+            var groups = new List<Group>();
+            
+            if (student != null)
+            {
+              groups = await _context.StudentGroup.Include(sg => sg.Group).Where(sg => sg.StudentId == student.Id)
+                    .Select(sg => sg.Group).ToListAsync();
+            }
+            
+             
             return new ProfileDto{
                 Name = user.Name,
                 Surname = user.Surname,
@@ -96,6 +108,7 @@ namespace api.Repository
                 Email = user.Email,
                 PhoneNumber = user.PhoneNumber,
                 Roles = user.Roles,
+                Groups = groups.Select(g => g.ToGroupDto()).ToList(),
             };
         }
 

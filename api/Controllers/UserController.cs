@@ -125,6 +125,7 @@ namespace api.Controllers
             if (profile == null) {
                 return Unauthorized();
             }
+            
             return Ok(profile);
         }
 
