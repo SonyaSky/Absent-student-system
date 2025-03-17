@@ -9,12 +9,13 @@ namespace api.Dtos
 {
     public class ProfileDto
     {
+        public string Id { get; set; } = string.Empty;
         public string Surname { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
         public string Patronymic { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
         public string? PhoneNumber { get; set; } = string.Empty;
-
+    
         public List<GroupDto> Groups { get; set; } = new List<GroupDto>();
         public List<FacultyDto> Faculties { get; set; } = new List<FacultyDto>();
         public List<Role> Roles { get; set; } = new List<Role>();

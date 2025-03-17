@@ -6,6 +6,7 @@ namespace api.Dtos
     public class StudentAbsenceDto
     {
         public Guid StudentId { get; set; }
+        public string UserId { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
         public string Surname { get; set; } = string.Empty;
         public string Patronymic { get; set; } = string.Empty;

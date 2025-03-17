@@ -18,9 +18,8 @@ namespace api.Services
             _context = context;
             _userManager = userManager;
         }
-        public async Task<List<AbsenceDto>> GetStudentAbsences(string authorizationString, Guid studentId, int year, int month)
+        public async Task<StudentAbsenceDto> GetStudentAbsences(string authorizationString, Guid studentId, int year, int month)
         {
-            
             var teacherUserEmail = TokenService.GetUserIdFromToken(authorizationString);
             var userFound = await _userManager.FindByEmailAsync(teacherUserEmail);
             bool teacher = _context.Teachers.Any(t => t.UserId == userFound.Id);
@@ -31,20 +30,35 @@ namespace api.Services
                 throw new Exception("You are not teacher or department worker");
             }
 
-            var studentAbsences = await _context.Absences
-                .Include(a => a.Student)
-                .Where(a => a.Student.Id == studentId
-                && (a.From.Year == year || a.To.Year == year || (year > a.From.Year && year < a.To.Year))
-                && (a.From.Month == month || a.To.Month == month || (month > a.From.Month && month < a.To.Month)))
-                .ToListAsync();
+            var student = await _context.Students.Include(s => s.User).FirstOrDefaultAsync(s => s.Id == studentId);
 
-            var studentAbsenceDtos = new List<AbsenceDto>();
-            foreach(var absence in studentAbsences)
+            if (student == null)
             {
-                studentAbsenceDtos.Add(absence.ToAbsenceDto());
+                throw new Exception("Student not found");
             }
+            
+            var studentAbsences = await _context.Absences.Include(a => a.Student)
+                .ThenInclude(s => s.Groups)
+                .ThenInclude(g => g.Group).ThenInclude(g => g.Faculty)
+                .Include(s => s.Student)
+                .ThenInclude(s => s.User).AsSplitQuery()
+                .Where(a => (year >= a.From.Year && year <=  a.To.Year)
+                            && (month >= a.From.Month && month <= a.To.Month) && a.StudentId == studentId).OrderBy(a => a.From).ToListAsync();
 
-            return studentAbsenceDtos;
+            var transformedAbsentStudentDto = new StudentAbsenceDto()
+            {
+                Absences = studentAbsences.Select(a => a.ToAbsenceDto())
+                    .ToList(),
+                UserId = student.UserId,
+                StudentId = student.Id,
+                Name = student.User.Name,
+                Surname = student.User.Surname,
+                Patronymic = student.User.Patronymic,
+                Faculties = student.Groups.Select(g => g.Group.Faculty.ToFacultyDto()).ToList(),
+                Groups = student.Groups.Select(g => g.Group.ToGroupDto()).ToList()
+            };
+
+            return transformedAbsentStudentDto;
         }
 
         public async Task<List<StudentAbsenceDto>> GetStudentList(string authorizationString, int year, int month)

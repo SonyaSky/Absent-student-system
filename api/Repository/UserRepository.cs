@@ -103,10 +103,9 @@ namespace api.Repository
               faculties = await _context.Faculties.Include(f => f.Groups).Where(f => f.Groups.Any(g => groups.Contains(g)))
                     .ToListAsync();
             }
-            
-            
              
             return new ProfileDto{
+                Id = user.Id,
                 Name = user.Name,
                 Surname = user.Surname,
                 Patronymic = user.Patronymic,

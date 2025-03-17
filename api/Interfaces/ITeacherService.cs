@@ -6,7 +6,7 @@ namespace api.Interfaces
 {
     public interface ITeacherService
     {
-        Task<List<AbsenceDto>> GetStudentAbsences(string authorizationString, Guid studentId, int year, int month);
+        Task<StudentAbsenceDto> GetStudentAbsences(string authorizationString, Guid studentId, int year, int month);
         Task<List<StudentAbsenceDto>> GetStudentList(string authorizationString, int year, int month);
     }
 }

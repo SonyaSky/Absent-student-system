@@ -79,6 +79,7 @@ namespace api.Services
             }
             absence.To = editAbsenceDto.To;
             absence.Reason = editAbsenceDto.Reason;
+            absence.Status = AbsenceStatus.Checking;
             await _context.SaveChangesAsync();
             return absence;
         }
