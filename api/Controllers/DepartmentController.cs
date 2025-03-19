@@ -41,7 +41,7 @@ namespace api.Controllers
 
         [HttpPut("role")]
         [Authorize]
-        [SwaggerOperation(Summary = "Give a role")]
+        [SwaggerOperation(Summary = "Give a teacher role")]
         public async Task<IActionResult> GiveRole(
             [Required] Guid userId)
         {

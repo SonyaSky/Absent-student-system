@@ -40,6 +40,7 @@ namespace api.Services
             var studentAbsences = await _context.Absences.Include(a => a.Student)
                 .ThenInclude(s => s.Groups)
                 .ThenInclude(g => g.Group).ThenInclude(g => g.Faculty)
+                .Include(a => a.Files)
                 .Include(s => s.Student)
                 .ThenInclude(s => s.User).AsSplitQuery()
                 .Where(a => (year >= a.From.Year && year <=  a.To.Year)

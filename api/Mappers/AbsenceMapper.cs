@@ -29,6 +29,7 @@ namespace api.Mappers
                 To = absence.To,
                 Reason = absence.Reason,
                 Status = absence.Status,
+                Files = absence.Files.Select(f => f.ToConfirmationFileDto()).ToList()
             };
         }
 

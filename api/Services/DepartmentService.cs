@@ -57,7 +57,7 @@ namespace api.Services
 
             if (absentFound == null)
             {
-                throw new Exception("ABsent does not exist");
+                throw new Exception("Absence does not exist");
             }
 
             absentFound.Status = AbsenceStatus.Rejected;
@@ -68,18 +68,24 @@ namespace api.Services
         public async Task GiveRole(Guid userId, string authorizationString)
         {
             var departmentUserEmail = TokenService.GetUserIdFromToken(authorizationString);
-            var departmentFound = await _userManager.FindByEmailAsync(departmentUserEmail);
-            bool department = _context.Departments.Any(d => d.UserId == departmentFound.Id);
-
-            if (!department)
-            {
-                throw new Exception("You are not department worker");
-            }
-
+            var user = await _userManager.FindByEmailAsync(departmentUserEmail);
             var userFound = await _context.Users.FirstOrDefaultAsync(u => u.Id == userId.ToString());
+            
+            if (user == null)
+            {
+                throw new Exception("User does not exist");
+            }
+            
             if (userFound == null)
             {
                 throw new Exception("This user does not exist");
+            }
+            
+            bool department = _context.Departments.Any(d => d.UserId == user.Id);
+
+            if (!department && !user.Roles.Contains(Role.Admin))
+            {
+                throw new Exception("You are not department worker nor admin");
             }
 
             if (!userFound.Roles.Contains(Role.Teacher))

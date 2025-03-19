@@ -19,11 +19,13 @@ namespace api.Controllers
     {
         private readonly IAdminService _adminService;
         private readonly IFacultyService _facultyService;
+        private readonly IUserRepository _userRepository;
 
-        public AdminController(IFacultyService facultyService, IAdminService adminService)
+        public AdminController(IFacultyService facultyService, IAdminService adminService, IUserRepository userRepository)
         {
             _facultyService = facultyService;
             _adminService = adminService;
+            _userRepository = userRepository;
         }
 
         [HttpPut("role/{id}")]
@@ -32,8 +34,8 @@ namespace api.Controllers
         public async Task<IActionResult> GiveRole([FromRoute] string id, [FromBody] Guid facultyId)
         {
             var username = User.GetUsername();
-            var admin = await _adminService.FindAdmin(username);
-            if (admin == null)
+            var user = await _userRepository.FindUser(username);
+            if (user == null || !user.Roles.Contains(Role.Admin))
             {
                 return Unauthorized();
             }
@@ -44,8 +46,8 @@ namespace api.Controllers
                     Message = $"Faculty with id={facultyId} doesn't exist"
                 });
             }
-            var user = await _adminService.FindUser(id);
-            if (user == null) {
+            var userToGiveRoleTo = await _adminService.FindUser(id);
+            if (userToGiveRoleTo == null) {
                 return BadRequest(new Response {
                     Status = "Error",
                     Message = $"User with id={id} doesn't exist"

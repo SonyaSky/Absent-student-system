@@ -37,7 +37,6 @@ namespace api.Services
                     UserId = user.Id,
                     User = user
                 };
-                await _context.Admins.AddAsync(admin);
                 await _context.SaveChangesAsync();
                 return new TokenResponse
                 {
@@ -48,13 +47,6 @@ namespace api.Services
             {
                 return null;
             }
-        }
-
-        public async Task<Admin?> FindAdmin(string username)
-        {
-            var user = await _userManager.FindByNameAsync(username);
-            var admin = await _context.Admins.FirstOrDefaultAsync(a => a.UserId == user.Id);
-            return admin;
         }
 
         public async Task<User?> FindUser(string id)

@@ -11,7 +11,6 @@ namespace api.Interfaces
     {
         Task GiveRole(string userId, Faculty faculty);
         Task<TokenResponse?> CreateAdminAsync(RegisterUserDto userDto);
-        Task<Admin?> FindAdmin(string username);
         Task<User?> FindUser(string id);
         Task<User?> FindUserByEmail(string email);
     }
